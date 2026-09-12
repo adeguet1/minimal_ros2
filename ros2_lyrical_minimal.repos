@@ -1,0 +1,141 @@
+repositories:
+  ament/ament_cmake:
+    type: git
+    url: https://github.com/ament/ament_cmake.git
+    version: lyrical
+  ament/ament_package:
+    type: git
+    url: https://github.com/ament/ament_package.git
+    version: lyrical
+  ament/ament_index:
+    type: git
+    url: https://github.com/ament/ament_index.git
+    version: lyrical
+  ros/ros_environment:
+    type: git
+    url: https://github.com/ros/ros_environment.git
+    version: lyrical
+  ros2/ament_cmake_ros:
+    type: git
+    url: https://github.com/ros2/ament_cmake_ros.git
+    version: lyrical
+  ros2/rosidl:
+    type: git
+    url: https://github.com/ros2/rosidl.git
+    version: lyrical
+  ros2/rosidl_core:
+    type: git
+    url: https://github.com/ros2/rosidl_core.git
+    version: lyrical
+  ros2/rosidl_defaults:
+    type: git
+    url: https://github.com/ros2/rosidl_defaults.git
+    version: lyrical
+  ros2/rosidl_typesupport:
+    type: git
+    url: https://github.com/ros2/rosidl_typesupport.git
+    version: lyrical
+  ros2/rosidl_dynamic_typesupport:
+    type: git
+    url: https://github.com/ros2/rosidl_dynamic_typesupport.git
+    version: lyrical
+  ros2/rosidl_python:
+    type: git
+    url: https://github.com/ros2/rosidl_python.git
+    version: lyrical
+  ros2/rosidl_runtime_py:
+    type: git
+    url: https://github.com/ros2/rosidl_runtime_py.git
+    version: lyrical
+  ros2/rcutils:
+    type: git
+    url: https://github.com/ros2/rcutils.git
+    version: lyrical
+  ros2/rcpputils:
+    type: git
+    url: https://github.com/ros2/rcpputils.git
+    version: lyrical
+  ros2/rpyutils:
+    type: git
+    url: https://github.com/ros2/rpyutils.git
+    version: lyrical
+  ros2/libyaml_vendor:
+    type: git
+    url: https://github.com/ros2/libyaml_vendor.git
+    version: lyrical
+  ros2/ros2_tracing:
+    type: git
+    url: https://github.com/ros2/ros2_tracing.git
+    version: lyrical
+  ros2/console_bridge_vendor:
+    type: git
+    url: https://github.com/ros2/console_bridge_vendor.git
+    version: lyrical
+  ros/class_loader:
+    type: git
+    url: https://github.com/ros/class_loader.git
+    version: lyrical
+  eclipse-cyclonedds/cyclonedds:
+    type: git
+    url: https://github.com/eclipse-cyclonedds/cyclonedds.git
+    version: releases/11.0.x
+  ros2/rmw:
+    type: git
+    url: https://github.com/ros2/rmw.git
+    version: lyrical
+  ros2/rmw_dds_common:
+    type: git
+    url: https://github.com/ros2/rmw_dds_common.git
+    version: lyrical
+  ros2/rmw_implementation:
+    type: git
+    url: https://github.com/ros2/rmw_implementation.git
+    version: lyrical
+  ros2/rmw_cyclonedds:
+    type: git
+    url: https://github.com/ros2/rmw_cyclonedds.git
+    version: lyrical
+  ros2/spdlog_vendor:
+    type: git
+    url: https://github.com/ros2/spdlog_vendor.git
+    version: lyrical
+  ros2/rcl_logging:
+    type: git
+    url: https://github.com/ros2/rcl_logging.git
+    version: lyrical
+  ros-tooling/libstatistics_collector:
+    type: git
+    url: https://github.com/ros-tooling/libstatistics_collector.git
+    version: lyrical
+  ros2/rcl:
+    type: git
+    url: https://github.com/ros2/rcl.git
+    version: lyrical
+  ros2/rclcpp:
+    type: git
+    url: https://github.com/ros2/rclcpp.git
+    version: lyrical
+  ros2/rcl_interfaces:
+    type: git
+    url: https://github.com/ros2/rcl_interfaces.git
+    version: lyrical
+  ros2/unique_identifier_msgs:
+    type: git
+    url: https://github.com/ros2/unique_identifier_msgs.git
+    version: lyrical
+  ros2/common_interfaces:
+    type: git
+    url: https://github.com/ros2/common_interfaces.git
+    version: lyrical
+  ros2/eigen3_cmake_module:
+    type: git
+    url: https://github.com/ros2/eigen3_cmake_module.git
+    version: lyrical
+  ros2/message_filters:
+    type: git
+    url: https://github.com/ros2/message_filters.git
+    version: lyrical
+  ros2/geometry2:
+    type: git
+    url: https://github.com/ros2/geometry2.git
+    version: lyrical
