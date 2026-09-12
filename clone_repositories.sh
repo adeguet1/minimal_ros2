@@ -30,6 +30,9 @@ repos=(
   "https://github.com/ros2/rosidl_runtime_py.git ros2/rosidl_runtime_py lyrical"
 
   # Utilities & core runtime
+  "https://github.com/ros/pluginlib.git ros/pluginlib lyrical"
+  "https://github.com/ros2/urdf.git ros2/urdf lyrical"
+  "https://github.com/ros/kdl_parser.git ros/kdl_parser lyrical"
   "https://github.com/ros2/rcutils.git ros2/rcutils lyrical"
   "https://github.com/ros2/rcpputils.git ros2/rcpputils lyrical"
   "https://github.com/ros2/rpyutils.git ros2/rpyutils lyrical"

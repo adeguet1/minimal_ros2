@@ -25,7 +25,7 @@ This repository provides only the core client library and coordinate transform l
    ```
 2. **Homebrew Dependencies**:
    ```bash
-   brew install cmake ninja libyaml spdlog console_bridge orocos-kdl
+   brew install cmake ninja libyaml spdlog console_bridge orocos-kdl tinyxml2 urdfdom
    ```
 3. **Python (>= 3.10)**:
    Any modern Python 3 interpreter (e.g. `brew install python@3.12` or 3D Slicer's bundled Python).
