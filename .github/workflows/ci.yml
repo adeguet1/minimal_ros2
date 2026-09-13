@@ -16,27 +16,10 @@ jobs:
         include:
           - name: macOS
             os: macos-latest
-            generator: "Ninja"
-            cmake_flags: "-G Ninja -DCMAKE_BUILD_TYPE=Release"
-            example_generator: "-G Ninja"
-            example_flags: "-DCMAKE_BUILD_TYPE=Release"
-            run_cmd: "./build_example/minimal_consumer"
-
           - name: Windows
             os: windows-latest
-            generator: "Visual Studio 17 2022"
-            cmake_flags: "-G 'Visual Studio 17 2022' -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
-            example_generator: "-G 'Visual Studio 17 2022' -A x64"
-            example_flags: "-DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
-            run_cmd: ".\build_example\Release\minimal_consumer.exe"
-
           - name: Linux
             os: ubuntu-latest
-            generator: "Ninja"
-            cmake_flags: "-G Ninja -DCMAKE_BUILD_TYPE=Release"
-            example_generator: "-G Ninja"
-            example_flags: "-DCMAKE_BUILD_TYPE=Release"
-            run_cmd: "./build_example/minimal_consumer"
 
     steps:
       - name: Checkout repository
@@ -68,40 +51,66 @@ jobs:
           git config --system core.longpaths true
           vcpkg install libyaml tinyxml2 spdlog eigen3 asio console-bridge urdfdom --triplet x64-windows
 
-      # Build minimal_ros2 Superbuild
-      - name: Configure Superbuild
+      # Configure Superbuild
+      - name: Configure Superbuild (POSIX)
+        if: runner.os != 'Windows'
+        run: |
+          cmake -B build -S . \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install"
+
+      - name: Configure Superbuild (Windows)
+        if: runner.os == 'Windows'
         shell: pwsh
         run: |
           cmake -B build -S . `
+            -G "Visual Studio 17 2022" `
+            -A x64 `
+            -DCMAKE_BUILD_TYPE=Release `
             -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install" `
-            ${{ matrix.cmake_flags }}
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
 
+      # Build Underlay
       - name: Build Underlay
-        shell: pwsh
         run: |
           cmake --build build --config Release --parallel 4
 
       # Downstream Verification: Build and run examples/minimal_consumer
-      - name: Configure Downstream Example
+      - name: Configure Downstream Example (POSIX)
+        if: runner.os != 'Windows'
+        run: |
+          cmake -B build_example -S examples/minimal_consumer \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_PREFIX_PATH="${{ github.workspace }}/install"
+
+      - name: Configure Downstream Example (Windows)
+        if: runner.os == 'Windows'
         shell: pwsh
         run: |
           cmake -B build_example -S examples/minimal_consumer `
-            ${{ matrix.example_generator }} `
+            -G "Visual Studio 17 2022" `
+            -A x64 `
+            -DCMAKE_BUILD_TYPE=Release `
             -DCMAKE_PREFIX_PATH="${{ github.workspace }}/install" `
-            ${{ matrix.example_flags }}
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
 
       - name: Build Downstream Example
-        shell: pwsh
         run: |
           cmake --build build_example --config Release
 
-      - name: Run Downstream Example
+      - name: Run Downstream Example (POSIX)
+        if: runner.os != 'Windows'
+        run: |
+          ./build_example/minimal_consumer
+
+      - name: Run Downstream Example (Windows)
+        if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          if ("${{ runner.os }}" -eq "Windows") {
-            $env:PATH = "${{ github.workspace }}/install/bin;$env:PATH"
-          }
-          ${{ matrix.run_cmd }}
+          $env:PATH = "${{ github.workspace }}\install\bin;$env:PATH"
+          .\build_example\Release\minimal_consumer.exe
 
       # Upload Prebuilt Underlay Archive
       - name: Package and Upload Artifact
