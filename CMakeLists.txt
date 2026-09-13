@@ -12,6 +12,9 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build" FORCE)
 endif()
 
+# Find Python 3 Interpreter first
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
+
 # Options
 option(FETCH_SOURCES "Fetch repositories defined in repos/minimal_ros2.repos" ON)
 option(BUILD_TESTING "Build ROS 2 test fixtures" OFF)
@@ -27,19 +30,22 @@ message(STATUS " minimal_ros2 Superbuild")
 message(STATUS " Build type:     ${CMAKE_BUILD_TYPE}")
 message(STATUS " Install prefix: ${CMAKE_INSTALL_PREFIX}")
 message(STATUS " DDS Middleware: ${ROS2_DDS}")
+message(STATUS " Base Python:    ${Python3_EXECUTABLE} (${Python3_VERSION})")
 message(STATUS "==========================================================")
 
 # 1. Fetch sources if requested
 if(FETCH_SOURCES AND NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/ros2/rclcpp/package.xml")
-  message(STATUS "[minimal_ros2] Fetching source repositories...")
+  message(STATUS "[minimal_ros2] Fetching source repositories using ${Python3_EXECUTABLE}...")
   execute_process(
     COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/scripts/fetch_sources.py"
       --repos-file "${CMAKE_CURRENT_SOURCE_DIR}/repos/minimal_ros2.repos"
       --src-dir "${CMAKE_CURRENT_SOURCE_DIR}/src"
     RESULT_VARIABLE _fetch_res
+    ECHO_OUTPUT_VARIABLE
+    ECHO_ERROR_VARIABLE
   )
   if(NOT _fetch_res EQUAL 0)
-    message(FATAL_ERROR "Failed to fetch repositories. Check network and git configuration.")
+    message(FATAL_ERROR "Failed to fetch repositories (exit code ${_fetch_res}). Check network and git configuration.")
   endif()
 endif()
 
