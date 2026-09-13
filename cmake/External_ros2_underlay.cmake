@@ -44,5 +44,6 @@ add_custom_target(ros2_underlay ALL
       ${EXTRA_CMAKE_ARGS}
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
   DEPENDS python_build_env
+  VERBATIM
   COMMENT "Compiling minimal ROS 2 packages into ${CMAKE_INSTALL_PREFIX}..."
 )

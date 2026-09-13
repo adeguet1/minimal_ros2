@@ -24,8 +24,9 @@ else()
   add_custom_target(python_build_env
     COMMAND "${Python3_EXECUTABLE}" -m venv "${MINIMAL_ROS2_VENV_DIR}"
     COMMAND "${VENV_PIP}" install --upgrade pip
-    COMMAND "${VENV_PIP}" install "colcon-common-extensions" "empy<4" "lark" "catkin_pkg" "pyyaml" "numpy" "pybind11" "setuptools"
+    COMMAND "${VENV_PIP}" install colcon-common-extensions "empy==3.3.4" lark catkin_pkg pyyaml numpy pybind11 setuptools
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    VERBATIM
     COMMENT "Creating Python build environment in ${MINIMAL_ROS2_VENV_DIR}..."
   )
 endif()
