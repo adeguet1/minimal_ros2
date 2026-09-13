@@ -44,7 +44,7 @@ minimal_ros2/
    ```
 2. **Homebrew Dependencies**:
    ```bash
-   brew install cmake ninja libyaml spdlog console_bridge tinyxml2 urdfdom
+   brew install cmake ninja libyaml spdlog console_bridge tinyxml2 urdfdom eigen asio pybind11
    ```
 3. **Python (>= 3.10)**: Any modern Python 3 interpreter (or 3D Slicer's bundled Python).
 
