@@ -1,92 +1,124 @@
-# Minimal ROS 2 Underlay
+# Minimal ROS 2 Underlay (Superbuild)
 
-A lightweight, standalone, self-contained ROS 2 underlay designed for native compilation on **macOS** (Apple Silicon `arm64` and Intel `x86_64`) and **Linux**.
+A lightweight, standalone, self-contained ROS 2 underlay designed for native compilation on **macOS**, **Windows**, and **Linux**.
 
-This repository provides only the core client library and coordinate transform layers required to build C++ ROS 2 nodes, plugins, and embedded GUI applications (such as [3D Slicer](https://www.slicer.org/) loadable modules, [cisst/saw](https://github.com/jhu-cisst/cisst), or [dVRK](https://github.com/jhu-dvrk/sawIntuitiveResearchKit)) without needing to install a massive 10+ GB full ROS 2 desktop distribution.
+This repository compiles only the essential client library and coordinate transform layers required to build C++ ROS 2 nodes, plugins, and embedded GUI applications (such as [3D Slicer](https://www.slicer.org/) loadable modules, [cisst/saw](https://github.com/jhu-cisst/cisst), or [dVRK](https://github.com/jhu-dvrk/sawIntuitiveResearchKit)) without needing to install a 10+ GB full ROS 2 desktop distribution.
 
 ---
 
-## Included Components
+## Architecture & Features
 
-* **DDS Middleware**: [Eclipse CycloneDDS](https://github.com/eclipse-cyclonedds/cyclonedds) + `rmw_cyclonedds_cpp` (pure C/C++, fast, no Java/JVM dependencies).
+```text
+minimal_ros2/
+├── CMakeLists.txt                 # Top-level Superbuild entry point
+├── repos/
+│   └── minimal_ros2.repos         # VCS YAML definition of repos and commit tags
+├── cmake/
+│   ├── External_python_env.cmake  # Python build environment setup
+│   ├── External_cyclonedds.cmake  # CycloneDDS pure CMake build recipe
+│   ├── External_fastrtps.cmake    # Fast-DDS build recipe
+│   ├── External_rcutils.cmake     # C runtime and memory utilities
+│   ├── External_rclcpp.cmake      # C++ client library
+│   ├── External_ros2_underlay.cmake # Topological package compiler
+│   └── minimal_ros2-config.cmake.in # find_package(minimal_ros2) config template
+├── scripts/
+│   ├── fetch_sources.py           # Cross-platform Python git cloner (no vcstool required)
+│   └── setup_env.py               # Cross-platform environment generator (sh, bat, ps1, Slicer ini)
+└── README.md
+```
+
+* **DDS Middleware**: Eclipse CycloneDDS (default) or eProsima Fast-DDS.
 * **Core C/C++ Client Library**: `rclcpp`, `rcl`, `rcutils`, `rcpputils`, `tracetools`.
 * **Coordinate Transformations**: `tf2`, `tf2_ros`, `tf2_msgs`, `tf2_geometry_msgs`, `message_filters`.
 * **Standard Interfaces**: `std_msgs`, `geometry_msgs`, `sensor_msgs`, `trajectory_msgs`, `shape_msgs`, `std_srvs`, `rcl_interfaces`.
-* **IDL & Code Generators**: `rosidl` compiler suite with C, C++, and Python typesupport generation.
+* **Cross-Platform**: Works on macOS (Apple Silicon `arm64` and Intel `x86_64`), Windows (MSVC 2019/2022 x64), and Linux.
 
 ---
 
 ## Prerequisites
 
-### macOS (Apple Silicon & Intel)
+### macOS
 1. **Xcode Command Line Tools**:
    ```bash
    xcode-select --install
    ```
 2. **Homebrew Dependencies**:
    ```bash
-   brew install cmake ninja libyaml spdlog console_bridge orocos-kdl tinyxml2 urdfdom
+   brew install cmake ninja libyaml spdlog console_bridge tinyxml2 urdfdom
    ```
-3. **Python (>= 3.10)**:
-   Any modern Python 3 interpreter (e.g. `brew install python@3.12` or 3D Slicer's bundled Python).
+3. **Python (>= 3.10)**: Any modern Python 3 interpreter (or 3D Slicer's bundled Python).
+
+### Windows
+1. **Visual Studio 2022** (with "Desktop development with C++").
+2. **CMake (>= 3.20)** & **Git**.
+3. **Python (>= 3.10)** installed and in `PATH`.
+4. Enable **Windows Long Paths**:
+   ```cmd
+   git config --system core.longpaths true
+   ```
 
 ---
 
-## Quickstart
+## Building the Underlay
 
-### 1. Set Up Python Build Environment
-Run the setup script to create a local virtual environment (`.venv`) with the required build tools (`colcon`, `empy`, `lark`, `catkin_pkg`, `pyyaml`, `numpy`):
-
+### macOS / Linux
 ```bash
-./setup_venv.sh
-```
-*(Optional: Pass a custom Python interpreter, e.g. `./setup_venv.sh /path/to/slicer/build/python-install/bin/python3`).*
-
-### 2. Clone Repositories
-Download the minimal set of repositories (defaulting to ROS 2 `lyrical` branch) without requiring `vcstool`:
-
-```bash
-./clone_repositories.sh
+cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j8
 ```
 
-*(Alternatively, if you have `vcstool` installed: `vcs import src < ros2_lyrical_minimal.repos`).*
-
-### 3. Build the Underlay
-Build the entire underlay into a clean, unified install prefix (`install/`):
-
-```bash
-./build.sh
+### Windows (Visual Studio)
+```cmd
+cmake -B build -S . -G "Visual Studio 17 2022" -A x64
+cmake --build build --config Release
 ```
 
-The build uses parallel compilation via Ninja/CMake and completes in approximately 3 to 5 minutes on Apple Silicon.
+The Superbuild will automatically:
+1. Fetch all required repositories using `scripts/fetch_sources.py`.
+2. Prepare a local Python environment (`.venv`) with code generation packages (`empy`, `lark`, `catkin_pkg`, `colcon`).
+3. Compile all packages in topological order into `install/`.
+4. Generate shell scripts (`setup.sh`, `setup.bat`, `setup.ps1`) and `SlicerLauncherSettings.ini`.
+5. Export `minimal_ros2-config.cmake` for downstream CMake projects.
 
 ---
 
-## Using with CMake Projects
+## Using in Downstream CMake Projects (e.g. Slicer ROS 2 Module)
 
-Once compiled, you can build any downstream CMake project against this underlay simply by adding its `install` directory to `CMAKE_PREFIX_PATH`:
-
-```bash
-cmake -B build -S <your_project> \
-  -DCMAKE_PREFIX_PATH=/path/to/minimal_ros2/install
-cmake --build build
-```
-
-Inside your `CMakeLists.txt`, use standard modern CMake targets:
+Downstream projects can directly consume `minimal_ros2` using modern CMake:
 
 ```cmake
+find_package(minimal_ros2 REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
 add_executable(my_node src/main.cpp)
 target_link_libraries(my_node PRIVATE
   rclcpp::rclcpp
-  tf2::tf2
   tf2_ros::tf2_ros
   geometry_msgs::geometry_msgs__rosidl_typesupport_cpp
 )
+```
+
+Configure your project with:
+```bash
+cmake -B build -S . -DCMAKE_PREFIX_PATH=/path/to/minimal_ros2/install
+cmake --build build
+```
+
+---
+
+## Slicer Integration
+
+When launching 3D Slicer with custom ROS 2 modules, you can load the generated runtime settings:
+
+```bash
+# macOS / Linux
+/path/to/Slicer --launcher-additional-settings /path/to/minimal_ros2/install/SlicerLauncherSettings.ini
+```
+On Windows:
+```cmd
+C:\path\to\Slicer.exe --launcher-additional-settings C:\path\to\minimal_ros2\install\SlicerLauncherSettings.ini
 ```
 
 ---

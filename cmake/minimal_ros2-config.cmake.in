@@ -1,0 +1,57 @@
+# minimal_ros2 CMake package configuration file
+# Provides CMake targets, prefix paths, and environment settings for downstream projects (e.g. slicer_ros2_module)
+
+@PACKAGE_INIT@
+
+set(minimal_ros2_FOUND TRUE)
+set(minimal_ros2_VERSION "@PROJECT_VERSION@")
+set(minimal_ros2_INSTALL_PREFIX "@PACKAGE_CMAKE_INSTALL_PREFIX@")
+set(minimal_ros2_INSTALL_DIR "${PACKAGE_PREFIX_DIR}")
+set(minimal_ros2_DDS "@ROS2_DDS@")
+
+# Prepend underlay prefix to CMAKE_PREFIX_PATH so all downstream ROS 2 package lookups succeed
+if(DEFINED CMAKE_PREFIX_PATH)
+  list(FIND CMAKE_PREFIX_PATH "${PACKAGE_PREFIX_DIR}" _underlay_idx)
+  if(_underlay_idx EQUAL -1)
+    list(PREPEND CMAKE_PREFIX_PATH "${PACKAGE_PREFIX_DIR}")
+  endif()
+else()
+  set(CMAKE_PREFIX_PATH "${PACKAGE_PREFIX_DIR}")
+endif()
+
+# Export ROS2_UNDERLAY_DIR
+set(ROS2_UNDERLAY_DIR "${PACKAGE_PREFIX_DIR}")
+
+# Propagate PYTHONPATH to build environment so ament python generators work across Python versions
+file(GLOB _minimal_ros2_pylibs
+  "${PACKAGE_PREFIX_DIR}/lib/python*/site-packages"
+  "${PACKAGE_PREFIX_DIR}/lib/python*/dist-packages"
+  "${PACKAGE_PREFIX_DIR}/Lib/site-packages"
+)
+foreach(_pypath ${_minimal_ros2_pylibs})
+  if(IS_DIRECTORY "${_pypath}")
+    if(DEFINED ENV{PYTHONPATH})
+      set(ENV{PYTHONPATH} "${_pypath}:$ENV{PYTHONPATH}")
+    else()
+      set(ENV{PYTHONPATH} "${_pypath}")
+    endif()
+  endif()
+endforeach()
+
+# Propagate AMENT_PREFIX_PATH if unset
+if(NOT DEFINED ENV{AMENT_PREFIX_PATH})
+  set(ENV{AMENT_PREFIX_PATH} "${PACKAGE_PREFIX_DIR}")
+endif()
+
+# Define imported interface target
+if(NOT TARGET minimal_ros2::underlay)
+  add_library(minimal_ros2::underlay INTERFACE IMPORTED)
+  set_target_properties(minimal_ros2::underlay PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${PACKAGE_PREFIX_DIR}/include"
+  )
+endif()
+
+# Convenience auto-find for core packages if requested by COMPONENT
+foreach(_comp ${minimal_ros2_FIND_COMPONENTS})
+  find_package(${_comp} QUIET)
+endforeach()
