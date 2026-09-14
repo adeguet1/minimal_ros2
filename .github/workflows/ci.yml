@@ -34,14 +34,14 @@ jobs:
       - name: Install macOS dependencies
         if: runner.os == 'macOS'
         run: |
-          brew install ninja libyaml spdlog console_bridge tinyxml2 urdfdom eigen asio pybind11
+          brew install ninja libyaml spdlog console_bridge tinyxml2 urdfdom eigen asio pybind11 orocos-kdl
 
       # Linux System Dependencies
       - name: Install Linux dependencies
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build libyaml-dev libspdlog-dev libtinyxml2-dev libeigen3-dev libconsole-bridge-dev liburdfdom-dev libasio-dev pybind11-dev
+          sudo apt-get install -y ninja-build libyaml-dev libspdlog-dev libtinyxml2-dev libeigen3-dev libconsole-bridge-dev liburdfdom-dev libasio-dev pybind11-dev liborocos-kdl-dev
 
       # Windows System Dependencies & Configuration
       - name: Configure Windows environment
@@ -49,7 +49,7 @@ jobs:
         shell: pwsh
         run: |
           git config --system core.longpaths true
-          vcpkg install libyaml tinyxml2 spdlog eigen3 asio console-bridge urdfdom pybind11 --triplet x64-windows
+          vcpkg install libyaml tinyxml2 spdlog eigen3 asio console-bridge urdfdom pybind11 orocos-kdl --triplet x64-windows
 
       # Configure Superbuild
       - name: Configure Superbuild (POSIX)

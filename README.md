@@ -44,9 +44,18 @@ minimal_ros2/
    ```
 2. **Homebrew Dependencies**:
    ```bash
-   brew install cmake ninja libyaml spdlog console_bridge tinyxml2 urdfdom eigen asio pybind11
+   brew install cmake ninja libyaml spdlog console_bridge tinyxml2 urdfdom eigen asio pybind11 orocos-kdl
    ```
 3. **Python (>= 3.10)**: Any modern Python 3 interpreter (or 3D Slicer's bundled Python).
+
+### Linux (Ubuntu 22.04 / 24.04)
+1. **System Dependencies**:
+   ```bash
+   sudo apt-get update
+   sudo apt-get install -y cmake ninja-build libyaml-dev libspdlog-dev libtinyxml2-dev \
+     libeigen3-dev libconsole-bridge-dev liburdfdom-dev libasio-dev pybind11-dev liborocos-kdl-dev
+   ```
+2. **Python (>= 3.10)**: `python3` and `python3-venv`.
 
 ### Windows
 1. **Visual Studio 2022** (with "Desktop development with C++").
@@ -55,6 +64,10 @@ minimal_ros2/
 4. Enable **Windows Long Paths**:
    ```cmd
    git config --system core.longpaths true
+   ```
+5. **vcpkg Dependencies**:
+   ```cmd
+   vcpkg install libyaml tinyxml2 spdlog eigen3 asio console-bridge urdfdom pybind11 orocos-kdl --triplet x64-windows
    ```
 
 ---
