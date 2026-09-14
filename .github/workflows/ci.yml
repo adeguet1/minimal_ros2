@@ -16,10 +16,8 @@ jobs:
         include:
           - name: macOS
             os: macos-latest
-          # - name: Windows
-          #   os: windows-latest
-          # - name: Linux
-          #   os: ubuntu-latest
+          - name: Windows
+            os: windows-latest
 
     steps:
       - name: Checkout repository
@@ -34,14 +32,7 @@ jobs:
       - name: Install macOS dependencies
         if: runner.os == 'macOS'
         run: |
-          brew install ninja libyaml spdlog console_bridge tinyxml2 urdfdom eigen asio pybind11 orocos-kdl
-
-      # Linux System Dependencies
-      - name: Install Linux dependencies
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ninja-build libyaml-dev libspdlog-dev libtinyxml2-dev libeigen3-dev libconsole-bridge-dev liburdfdom-dev libasio-dev pybind11-dev liborocos-kdl-dev
+          brew install ninja libyaml spdlog console_bridge eigen asio pybind11
 
       # Windows System Dependencies & Configuration
       - name: Configure Windows environment
@@ -49,7 +40,7 @@ jobs:
         shell: pwsh
         run: |
           git config --system core.longpaths true
-          vcpkg install libyaml tinyxml2 spdlog eigen3 asio console-bridge urdfdom pybind11 orocos-kdl --triplet x64-windows
+          vcpkg install libyaml spdlog eigen3 asio console-bridge pybind11 --triplet x64-windows
 
       # Configure Superbuild
       - name: Configure Superbuild (POSIX)

@@ -3,18 +3,20 @@
 
 find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
-# Homebrew detection on macOS
-set(EXTRA_CMAKE_ARGS "")
+# Homebrew / prefix detection
+set(EXTRA_CMAKE_ARGS "-DCMAKE_PREFIX_PATH=${CMAKE_INSTALL_PREFIX}")
 if(APPLE)
   if(EXISTS "/opt/homebrew")
-    list(APPEND EXTRA_CMAKE_ARGS "-DCMAKE_PREFIX_PATH=/opt/homebrew")
+    set(EXTRA_CMAKE_ARGS "-DCMAKE_PREFIX_PATH=${CMAKE_INSTALL_PREFIX};/opt/homebrew")
   elseif(EXISTS "/usr/local")
-    list(APPEND EXTRA_CMAKE_ARGS "-DCMAKE_PREFIX_PATH=/usr/local")
+    set(EXTRA_CMAKE_ARGS "-DCMAKE_PREFIX_PATH=${CMAKE_INSTALL_PREFIX};/usr/local")
   endif()
 endif()
 
 # Packages ignored (test fixtures and optional plugins)
 set(PACKAGES_TO_IGNORE
+  orocos_kdl
+  python_orocos_kdl
   tf2_bullet
   tf2_kdl
   tf2_eigen_kdl
@@ -43,7 +45,7 @@ add_custom_target(ros2_underlay ALL
       -DBUILD_TESTING=OFF
       ${EXTRA_CMAKE_ARGS}
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-  DEPENDS python_build_env
+  DEPENDS python_build_env orocos_kdl
   VERBATIM
   COMMENT "Compiling minimal ROS 2 packages into ${CMAKE_INSTALL_PREFIX}..."
 )

@@ -62,6 +62,8 @@ elseif(ROS2_DDS STREQUAL "fastdds")
   include(External_fastrtps)
 endif()
 
+include(External_orocos_kdl)
+
 # 4. Compile underlay packages
 include(External_ros2_underlay)
 
