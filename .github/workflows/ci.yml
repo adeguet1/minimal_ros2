@@ -56,7 +56,7 @@ jobs:
         shell: pwsh
         run: |
           cmake -B build -S . `
-            -G "Visual Studio 17 2022" `
+            -G "Visual Studio 18 2026" `
             -A x64 `
             -DCMAKE_BUILD_TYPE=Release `
             -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install" `
@@ -81,7 +81,7 @@ jobs:
         shell: pwsh
         run: |
           cmake -B build_example -S examples/minimal_consumer `
-            -G "Visual Studio 17 2022" `
+            -G "Visual Studio 18 2026" `
             -A x64 `
             -DCMAKE_BUILD_TYPE=Release `
             -DCMAKE_PREFIX_PATH="${{ github.workspace }}/install" `
@@ -101,7 +101,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $env:PATH = "${{ github.workspace }}\install\bin;$env:PATH"
+          $env:PATH = "${{ github.workspace }}\install\bin;$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\bin;$env:PATH"
           .\build_example\Release\minimal_consumer.exe
 
       # Upload Prebuilt Underlay Archive
