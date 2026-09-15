@@ -84,8 +84,10 @@ set(PACKAGES_TO_IGNORE
   rosbag2_compression
   rosbag2_compression_zstd
   rosbag2_cpp
-  rosbag2_examples
-  rosbag2_performance
+  rosbag2_examples_cpp
+  rosbag2_examples_py
+  rosbag2_performance_benchmarking
+  rosbag2_performance_benchmarking_msgs
   rosbag2_py
   rosbag2_storage
   rosbag2_storage_default_plugins
