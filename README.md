@@ -1,5 +1,7 @@
 # Minimal ROS 2 (Superbuild)
 
+[![CI](https://github.com/adeguet1/minimal_ros2/actions/workflows/ci.yml/badge.svg)](https://github.com/adeguet1/minimal_ros2/actions/workflows/ci.yml)
+
 A lightweight, standalone, self-contained ROS 2 distribution designed for native compilation on **macOS**, **Windows**, and **Linux**.
 
 This repository compiles only the essential client library and coordinate transform layers required to build C++ ROS 2 nodes, plugins, and embedded GUI applications (such as [3D Slicer](https://www.slicer.org/) loadable modules) without needing to install a 10+ GB full ROS 2 desktop distribution.
