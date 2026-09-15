@@ -44,16 +44,24 @@ set(PACKAGES_TO_IGNORE
   lttngpy
 )
 
+include(ProcessorCount)
+ProcessorCount(NCORES)
+if(NCORES EQUAL 0)
+  set(NCORES 4)
+endif()
+
 add_custom_target(ros2_underlay ALL
   COMMAND "${BUILD_COLCON_EXECUTABLE}" build
     --base-paths "${CMAKE_SOURCE_DIR}/src"
     --merge-install
     --install-base "${CMAKE_INSTALL_PREFIX}"
+    --parallel-workers ${NCORES}
     --packages-ignore ${PACKAGES_TO_IGNORE}
     --cmake-args
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
       -DPython3_EXECUTABLE=${BUILD_PYTHON_EXECUTABLE}
       -DBUILD_TESTING=OFF
+      -DCMAKE_BUILD_PARALLEL_LEVEL=${NCORES}
       ${EXTRA_CMAKE_ARGS}
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
   DEPENDS python_build_env orocos_kdl

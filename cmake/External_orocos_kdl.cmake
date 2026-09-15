@@ -38,11 +38,18 @@ else()
   )
 endif()
 
+include(ProcessorCount)
+ProcessorCount(NCORES)
+if(NCORES EQUAL 0)
+  set(NCORES 4)
+endif()
+
 ExternalProject_Add(orocos_kdl
   ${OROCOS_KDL_SOURCE_ARGS}
   PREFIX "${CMAKE_BINARY_DIR}/orocos_kdl-prefix"
   BINARY_DIR "${CMAKE_BINARY_DIR}/orocos_kdl-build"
   INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
+  BUILD_COMMAND ${CMAKE_COMMAND} --build <BINARY_DIR> --config ${CMAKE_BUILD_TYPE} --parallel ${NCORES}
   CMAKE_ARGS
     -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
