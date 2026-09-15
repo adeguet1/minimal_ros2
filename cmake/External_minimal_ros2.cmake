@@ -51,6 +51,26 @@ set(PACKAGES_TO_IGNORE
   test_ros2trace
   examples_tf2_py
   lttngpy
+  # Ignore non-interface rosbag2 packages
+  lz4_cmake_module
+  mcap_vendor
+  ros2bag
+  rosbag2
+  rosbag2_compression
+  rosbag2_compression_zstd
+  rosbag2_cpp
+  rosbag2_examples
+  rosbag2_performance
+  rosbag2_py
+  rosbag2_storage
+  rosbag2_storage_default_plugins
+  rosbag2_storage_mcap
+  rosbag2_storage_sqlite3
+  rosbag2_test_common
+  rosbag2_test_msgdefs
+  rosbag2_tests
+  rosbag2_transport
+  zstd_cmake_module
 )
 
 include(ProcessorCount)

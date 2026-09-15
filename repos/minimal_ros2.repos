@@ -167,3 +167,19 @@ repositories:
     type: git
     url: https://github.com/ros2/geometry2.git
     version: lyrical
+  ros2/rosbag2:
+    type: git
+    url: https://github.com/ros2/rosbag2.git
+    version: lyrical
+  moveit/moveit_msgs:
+    type: git
+    url: https://github.com/moveit/moveit_msgs.git
+    version: ros2
+  wg-perception/object_recognition_msgs:
+    type: git
+    url: https://github.com/wg-perception/object_recognition_msgs.git
+    version: ros2
+  OctoMap/octomap_msgs:
+    type: git
+    url: https://github.com/OctoMap/octomap_msgs.git
+    version: ros2
