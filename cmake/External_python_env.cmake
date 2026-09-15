@@ -8,11 +8,9 @@ set(MINIMAL_ROS2_VENV_DIR "${CMAKE_SOURCE_DIR}/.venv" CACHE PATH "Path to Python
 
 if(WIN32)
   set(VENV_PYTHON "${MINIMAL_ROS2_VENV_DIR}/Scripts/python.exe")
-  set(VENV_PIP "${MINIMAL_ROS2_VENV_DIR}/Scripts/pip.exe")
   set(VENV_COLCON "${MINIMAL_ROS2_VENV_DIR}/Scripts/colcon.exe")
 else()
   set(VENV_PYTHON "${MINIMAL_ROS2_VENV_DIR}/bin/python3")
-  set(VENV_PIP "${MINIMAL_ROS2_VENV_DIR}/bin/pip")
   set(VENV_COLCON "${MINIMAL_ROS2_VENV_DIR}/bin/colcon")
 endif()
 
@@ -23,8 +21,8 @@ if(EXISTS "${VENV_PYTHON}")
 else()
   add_custom_target(python_build_env
     COMMAND "${Python3_EXECUTABLE}" -m venv "${MINIMAL_ROS2_VENV_DIR}"
-    COMMAND "${VENV_PIP}" install --upgrade pip
-    COMMAND "${VENV_PIP}" install colcon-common-extensions "empy==3.3.4" lark catkin_pkg pyyaml numpy pybind11 setuptools
+    COMMAND "${VENV_PYTHON}" -m pip install --upgrade pip
+    COMMAND "${VENV_PYTHON}" -m pip install colcon-common-extensions "empy==3.3.4" lark catkin_pkg pyyaml numpy pybind11 setuptools
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     VERBATIM
     COMMENT "Creating Python build environment in ${MINIMAL_ROS2_VENV_DIR}..."
