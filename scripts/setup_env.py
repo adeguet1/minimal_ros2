@@ -33,6 +33,7 @@ _DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 
 export MINIMAL_ROS2_DIR="${_DIR}"
 export AMENT_PREFIX_PATH="${_DIR}${AMENT_PREFIX_PATH:+:${AMENT_PREFIX_PATH}}"
+export CMAKE_PREFIX_PATH="${_DIR}${CMAKE_PREFIX_PATH:+:${CMAKE_PREFIX_PATH}}"
 export PATH="${_DIR}/bin:${PATH}"
 
 if [ "$(uname)" = "Darwin" ]; then
@@ -40,6 +41,20 @@ if [ "$(uname)" = "Darwin" ]; then
 else
   export LD_LIBRARY_PATH="${_DIR}/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
 fi
+
+# Discover vendored packages in opt/
+for _opt in "${_DIR}"/opt/*; do
+  if [ -d "${_opt}" ]; then
+    export CMAKE_PREFIX_PATH="${_opt}:${CMAKE_PREFIX_PATH}"
+    if [ -d "${_opt}/lib" ]; then
+      if [ "$(uname)" = "Darwin" ]; then
+        export DYLD_LIBRARY_PATH="${_opt}/lib:${DYLD_LIBRARY_PATH}"
+      else
+        export LD_LIBRARY_PATH="${_opt}/lib:${LD_LIBRARY_PATH}"
+      fi
+    fi
+  fi
+done
 """
     if py_dir:
         rel_path = py_dir.relative_to(install_dir)
@@ -58,10 +73,21 @@ set "MINIMAL_ROS2_DIR=%~dp0"
 if "%MINIMAL_ROS2_DIR:~-1%"=="\\" set "MINIMAL_ROS2_DIR=%MINIMAL_ROS2_DIR:~0,-1%"
 
 set "PATH=%MINIMAL_ROS2_DIR%\\bin;%PATH%"
+if defined CMAKE_PREFIX_PATH (
+  set "CMAKE_PREFIX_PATH=%MINIMAL_ROS2_DIR%;%CMAKE_PREFIX_PATH%"
+) else (
+  set "CMAKE_PREFIX_PATH=%MINIMAL_ROS2_DIR%"
+)
 if defined AMENT_PREFIX_PATH (
   set "AMENT_PREFIX_PATH=%MINIMAL_ROS2_DIR%;%AMENT_PREFIX_PATH%"
 ) else (
   set "AMENT_PREFIX_PATH=%MINIMAL_ROS2_DIR%"
+)
+
+for /d %%i in ("%MINIMAL_ROS2_DIR%\\opt\\*") do (
+  set "CMAKE_PREFIX_PATH=%%i;%CMAKE_PREFIX_PATH%"
+  if exist "%%i\\bin" set "PATH=%%i\\bin;%PATH%"
+  if exist "%%i\\lib" set "PATH=%%i\\lib;%PATH%"
 )
 
 if exist "%MINIMAL_ROS2_DIR%\\Lib\\site-packages" (
@@ -80,11 +106,20 @@ $InstallDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $env:MINIMAL_ROS2_DIR = $InstallDir
 
 $env:PATH = "$InstallDir\\bin;$env:PATH"
+$env:CMAKE_PREFIX_PATH = if ($env:CMAKE_PREFIX_PATH) { "$InstallDir;$env:CMAKE_PREFIX_PATH" } else { "$InstallDir" }
 
 if ($env:AMENT_PREFIX_PATH) {
     $env:AMENT_PREFIX_PATH = "$InstallDir;$env:AMENT_PREFIX_PATH"
 } else {
     $env:AMENT_PREFIX_PATH = "$InstallDir"
+}
+
+if (Test-Path "$InstallDir\\opt") {
+    Get-ChildItem -Path "$InstallDir\\opt" -Directory | ForEach-Object {
+        $env:CMAKE_PREFIX_PATH = "$($_.FullName);$env:CMAKE_PREFIX_PATH"
+        if (Test-Path "$($_.FullName)\\bin") { $env:PATH = "$($_.FullName)\\bin;$env:PATH" }
+        if (Test-Path "$($_.FullName)\lib") { $env:PATH = "$($_.FullName)\lib;$env:PATH" }
+    }
 }
 
 $PyDir = "$InstallDir\\Lib\\site-packages"

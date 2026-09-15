@@ -9,7 +9,17 @@ set(minimal_ros2_INSTALL_PREFIX "@PACKAGE_CMAKE_INSTALL_PREFIX@")
 set(minimal_ros2_INSTALL_DIR "${PACKAGE_PREFIX_DIR}")
 set(minimal_ros2_DDS "@ROS2_DDS@")
 
-# Prepend install prefix to CMAKE_PREFIX_PATH so all downstream ROS 2 package lookups succeed
+# Prepend install prefix and any opt/* vendor directories to CMAKE_PREFIX_PATH
+file(GLOB _minimal_ros2_opt_dirs "${PACKAGE_PREFIX_DIR}/opt/*")
+foreach(_opt_dir ${_minimal_ros2_opt_dirs})
+  if(IS_DIRECTORY "${_opt_dir}")
+    list(FIND CMAKE_PREFIX_PATH "${_opt_dir}" _opt_idx)
+    if(_opt_idx EQUAL -1)
+      list(PREPEND CMAKE_PREFIX_PATH "${_opt_dir}")
+    endif()
+  endif()
+endforeach()
+
 if(DEFINED CMAKE_PREFIX_PATH)
   list(FIND CMAKE_PREFIX_PATH "${PACKAGE_PREFIX_DIR}" _minimal_idx)
   if(_minimal_idx EQUAL -1)
