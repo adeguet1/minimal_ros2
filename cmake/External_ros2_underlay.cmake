@@ -3,14 +3,30 @@
 
 find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
-# Homebrew / prefix detection
-set(EXTRA_CMAKE_ARGS "-DCMAKE_PREFIX_PATH=${CMAKE_INSTALL_PREFIX}")
+# Prefix and pybind11 detection
+execute_process(
+  COMMAND "${BUILD_PYTHON_EXECUTABLE}" -m pybind11 --cmakedir
+  OUTPUT_VARIABLE PYBIND11_CMAKE_DIR
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  ERROR_QUIET
+)
+
+set(UNDERLAY_PREFIX_PATH "${CMAKE_INSTALL_PREFIX}")
 if(APPLE)
   if(EXISTS "/opt/homebrew")
-    set(EXTRA_CMAKE_ARGS "-DCMAKE_PREFIX_PATH=${CMAKE_INSTALL_PREFIX};/opt/homebrew")
+    list(APPEND UNDERLAY_PREFIX_PATH "/opt/homebrew")
   elseif(EXISTS "/usr/local")
-    set(EXTRA_CMAKE_ARGS "-DCMAKE_PREFIX_PATH=${CMAKE_INSTALL_PREFIX};/usr/local")
+    list(APPEND UNDERLAY_PREFIX_PATH "/usr/local")
   endif()
+endif()
+if(PYBIND11_CMAKE_DIR AND EXISTS "${PYBIND11_CMAKE_DIR}")
+  list(APPEND UNDERLAY_PREFIX_PATH "${PYBIND11_CMAKE_DIR}")
+endif()
+
+string(REPLACE ";" "\\;" UNDERLAY_PREFIX_ESCAPED "${UNDERLAY_PREFIX_PATH}")
+set(EXTRA_CMAKE_ARGS "-DCMAKE_PREFIX_PATH=${UNDERLAY_PREFIX_ESCAPED}")
+if(PYBIND11_CMAKE_DIR AND EXISTS "${PYBIND11_CMAKE_DIR}")
+  list(APPEND EXTRA_CMAKE_ARGS "-Dpybind11_DIR=${PYBIND11_CMAKE_DIR}")
 endif()
 
 # Packages ignored (test fixtures and optional plugins)
