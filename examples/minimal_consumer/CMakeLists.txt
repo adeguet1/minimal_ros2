@@ -4,7 +4,7 @@ project(minimal_consumer LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# 1. Find the minimal_ros2 underlay
+# 1. Find minimal_ros2
 find_package(minimal_ros2 REQUIRED)
 
 # 2. Find individual ROS 2 libraries

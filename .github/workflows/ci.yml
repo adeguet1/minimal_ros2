@@ -62,8 +62,8 @@ jobs:
             -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install" `
             -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
 
-      # Build Underlay
-      - name: Build Underlay
+      # Build minimal_ros2
+      - name: Build minimal_ros2
         run: |
           cmake --build build --config Release --parallel 4
 
@@ -76,6 +76,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_PREFIX_PATH="${{ github.workspace }}/install"
 
+      # Configure Downstream Example (Windows)
       - name: Configure Downstream Example (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -92,11 +93,13 @@ jobs:
         run: |
           cmake --build build_example --config Release
 
+      # Run Downstream Example (POSIX)
       - name: Run Downstream Example (POSIX)
         if: runner.os != 'Windows'
         run: |
           ./build_example/minimal_consumer
 
+      # Run Downstream Example (Windows)
       - name: Run Downstream Example (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -104,7 +107,7 @@ jobs:
           $env:PATH = "${{ github.workspace }}\install\bin;$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\bin;$env:PATH"
           .\build_example\Release\minimal_consumer.exe
 
-      # Upload Prebuilt Underlay Archive
+      # Upload Prebuilt minimal_ros2 Archive
       - name: Package and Upload Artifact
         uses: actions/upload-artifact@v4
         with:

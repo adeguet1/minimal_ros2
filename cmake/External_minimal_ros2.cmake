@@ -1,15 +1,23 @@
-# External_ros2_underlay.cmake
-# Orchestrates the topological build of all ROS 2 packages into CMAKE_INSTALL_PREFIX
+# External_minimal_ros2.cmake
+# Orchestrates the topological build of all minimal ROS 2 packages into CMAKE_INSTALL_PREFIX
 
 find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
-set(UNDERLAY_PREFIX_PATH "${CMAKE_INSTALL_PREFIX}")
+set(MINIMAL_PREFIX_PATH "${CMAKE_INSTALL_PREFIX}")
 if(APPLE)
   if(EXISTS "/opt/homebrew")
-    list(APPEND UNDERLAY_PREFIX_PATH "/opt/homebrew")
+    list(APPEND MINIMAL_PREFIX_PATH "/opt/homebrew")
   elseif(EXISTS "/usr/local")
-    list(APPEND UNDERLAY_PREFIX_PATH "/usr/local")
+    list(APPEND MINIMAL_PREFIX_PATH "/usr/local")
   endif()
+endif()
+
+if(WIN32)
+  list(APPEND MINIMAL_PREFIX_PATH "${MINIMAL_ROS2_VENV_DIR}/Lib/site-packages/pybind11")
+else()
+  list(APPEND MINIMAL_PREFIX_PATH
+    "${MINIMAL_ROS2_VENV_DIR}/lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages/pybind11"
+  )
 endif()
 
 file(GLOB _PYBIND11_PREFIXES
@@ -17,11 +25,12 @@ file(GLOB _PYBIND11_PREFIXES
   "${MINIMAL_ROS2_VENV_DIR}/Lib/site-packages/pybind11"
 )
 foreach(_p ${_PYBIND11_PREFIXES})
-  list(APPEND UNDERLAY_PREFIX_PATH "${_p}")
+  list(APPEND MINIMAL_PREFIX_PATH "${_p}")
 endforeach()
+list(REMOVE_DUPLICATES MINIMAL_PREFIX_PATH)
 
-string(REPLACE ";" "\\;" UNDERLAY_PREFIX_ESCAPED "${UNDERLAY_PREFIX_PATH}")
-set(EXTRA_CMAKE_ARGS "-DCMAKE_PREFIX_PATH=${UNDERLAY_PREFIX_ESCAPED}")
+string(REPLACE ";" "\\;" MINIMAL_PREFIX_ESCAPED "${MINIMAL_PREFIX_PATH}")
+set(EXTRA_CMAKE_ARGS "-DCMAKE_PREFIX_PATH=${MINIMAL_PREFIX_ESCAPED}")
 
 # Packages ignored (test fixtures and optional plugins)
 set(PACKAGES_TO_IGNORE
@@ -50,7 +59,7 @@ if(NCORES EQUAL 0)
   set(NCORES 4)
 endif()
 
-add_custom_target(ros2_underlay ALL
+add_custom_target(minimal_ros2_packages ALL
   COMMAND "${BUILD_COLCON_EXECUTABLE}" build
     --base-paths "${CMAKE_SOURCE_DIR}/src"
     --merge-install

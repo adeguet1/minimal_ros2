@@ -1,5 +1,5 @@
 # minimal_ros2 CMake package configuration file
-# Provides CMake targets, prefix paths, and environment settings for downstream projects (e.g. slicer_ros2_module)
+# Provides CMake targets, prefix paths, and environment settings for downstream projects
 
 @PACKAGE_INIT@
 
@@ -9,18 +9,18 @@ set(minimal_ros2_INSTALL_PREFIX "@PACKAGE_CMAKE_INSTALL_PREFIX@")
 set(minimal_ros2_INSTALL_DIR "${PACKAGE_PREFIX_DIR}")
 set(minimal_ros2_DDS "@ROS2_DDS@")
 
-# Prepend underlay prefix to CMAKE_PREFIX_PATH so all downstream ROS 2 package lookups succeed
+# Prepend install prefix to CMAKE_PREFIX_PATH so all downstream ROS 2 package lookups succeed
 if(DEFINED CMAKE_PREFIX_PATH)
-  list(FIND CMAKE_PREFIX_PATH "${PACKAGE_PREFIX_DIR}" _underlay_idx)
-  if(_underlay_idx EQUAL -1)
+  list(FIND CMAKE_PREFIX_PATH "${PACKAGE_PREFIX_DIR}" _minimal_idx)
+  if(_minimal_idx EQUAL -1)
     list(PREPEND CMAKE_PREFIX_PATH "${PACKAGE_PREFIX_DIR}")
   endif()
 else()
   set(CMAKE_PREFIX_PATH "${PACKAGE_PREFIX_DIR}")
 endif()
 
-# Export ROS2_UNDERLAY_DIR
-set(ROS2_UNDERLAY_DIR "${PACKAGE_PREFIX_DIR}")
+# Export MINIMAL_ROS2_DIR
+set(MINIMAL_ROS2_DIR "${PACKAGE_PREFIX_DIR}")
 
 # Propagate PYTHONPATH to build environment so ament python generators work across Python versions
 file(GLOB _minimal_ros2_pylibs
@@ -44,9 +44,9 @@ if(NOT DEFINED ENV{AMENT_PREFIX_PATH})
 endif()
 
 # Define imported interface target
-if(NOT TARGET minimal_ros2::underlay)
-  add_library(minimal_ros2::underlay INTERFACE IMPORTED)
-  set_target_properties(minimal_ros2::underlay PROPERTIES
+if(NOT TARGET minimal_ros2::minimal_ros2)
+  add_library(minimal_ros2::minimal_ros2 INTERFACE IMPORTED)
+  set_target_properties(minimal_ros2::minimal_ros2 PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${PACKAGE_PREFIX_DIR}/include"
   )
 endif()

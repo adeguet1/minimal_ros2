@@ -30,4 +30,4 @@ else()
 endif()
 
 set(BUILD_PYTHON_EXECUTABLE "${VENV_PYTHON}" CACHE FILEPATH "Python executable for code generation" FORCE)
-set(BUILD_COLCON_EXECUTABLE "${VENV_COLCON}" CACHE FILEPATH "Colcon executable for underlay build" FORCE)
+set(BUILD_COLCON_EXECUTABLE "${VENV_COLCON}" CACHE FILEPATH "Colcon executable for minimal_ros2 build" FORCE)

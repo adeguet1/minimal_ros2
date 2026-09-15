@@ -1,8 +1,8 @@
-# Minimal ROS 2 Underlay (Superbuild)
+# Minimal ROS 2 (Superbuild)
 
-A lightweight, standalone, self-contained ROS 2 underlay designed for native compilation on **macOS**, **Windows**, and **Linux**.
+A lightweight, standalone, self-contained ROS 2 distribution designed for native compilation on **macOS**, **Windows**, and **Linux**.
 
-This repository compiles only the essential client library and coordinate transform layers required to build C++ ROS 2 nodes, plugins, and embedded GUI applications (such as [3D Slicer](https://www.slicer.org/) loadable modules, [cisst/saw](https://github.com/jhu-cisst/cisst), or [dVRK](https://github.com/jhu-dvrk/sawIntuitiveResearchKit)) without needing to install a 10+ GB full ROS 2 desktop distribution.
+This repository compiles only the essential client library and coordinate transform layers required to build C++ ROS 2 nodes, plugins, and embedded GUI applications (such as [3D Slicer](https://www.slicer.org/) loadable modules) without needing to install a 10+ GB full ROS 2 desktop distribution.
 
 ---
 
@@ -19,11 +19,11 @@ minimal_ros2/
 │   ├── External_fastrtps.cmake    # Fast-DDS build recipe
 │   ├── External_rcutils.cmake     # C runtime and memory utilities
 │   ├── External_rclcpp.cmake      # C++ client library
-│   ├── External_ros2_underlay.cmake # Topological package compiler
+│   ├── External_minimal_ros2.cmake # Topological package compiler
 │   └── minimal_ros2-config.cmake.in # find_package(minimal_ros2) config template
 ├── scripts/
 │   ├── fetch_sources.py           # Cross-platform Python git cloner (no vcstool required)
-│   └── setup_env.py               # Cross-platform environment generator (sh, bat, ps1, Slicer ini)
+│   └── setup_env.py               # Cross-platform environment generator (sh, bat, ps1)
 └── README.md
 ```
 
@@ -46,7 +46,7 @@ minimal_ros2/
    ```bash
    brew install cmake ninja libyaml spdlog console_bridge eigen asio pybind11
    ```
-3. **Python (>= 3.10)**: Any modern Python 3 interpreter (or 3D Slicer's bundled Python).
+3. **Python (>= 3.10)**: Any modern Python 3 interpreter.
 
 ### Linux (Ubuntu 22.04 / 24.04)
 1. **System Dependencies**:
@@ -72,7 +72,7 @@ minimal_ros2/
 
 ---
 
-## Building the Underlay
+## Building minimal_ros2
 
 ### macOS / Linux
 ```bash
@@ -90,7 +90,7 @@ The Superbuild will automatically:
 1. Fetch all required repositories using `scripts/fetch_sources.py`.
 2. Prepare a local Python environment (`.venv`) with code generation packages (`empy`, `lark`, `catkin_pkg`, `colcon`).
 3. Compile all packages in topological order into `install/`.
-4. Generate shell scripts (`setup.sh`, `setup.bat`, `setup.ps1`) and `SlicerLauncherSettings.ini`.
+4. Generate shell scripts (`setup.sh`, `setup.bat`, `setup.ps1`).
 5. Export `minimal_ros2-config.cmake` for downstream CMake projects.
 
 ---
@@ -121,20 +121,6 @@ cmake --build build
 
 ---
 
-## Slicer Integration
-
-When launching 3D Slicer with custom ROS 2 modules, you can load the generated runtime settings:
-
-```bash
-# macOS / Linux
-/path/to/Slicer --launcher-additional-settings /path/to/minimal_ros2/install/SlicerLauncherSettings.ini
-```
-On Windows:
-```cmd
-C:\path\to\Slicer.exe --launcher-additional-settings C:\path\to\minimal_ros2\install\SlicerLauncherSettings.ini
-```
-
----
 
 ## License
 Apache 2.0 / BSD 3-Clause (aligned with upstream ROS 2 components).

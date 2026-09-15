@@ -64,15 +64,15 @@ endif()
 
 include(External_orocos_kdl)
 
-# 4. Compile underlay packages
-include(External_ros2_underlay)
+# 4. Compile minimal ROS 2 packages
+include(External_minimal_ros2)
 
-# 5. Generate environment files (setup.sh, setup.bat, setup.ps1, SlicerLauncherSettings.ini)
+# 5. Generate environment files (setup.sh, setup.bat, setup.ps1)
 add_custom_target(generate_env ALL
   COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/scripts/setup_env.py"
     --install-dir "${CMAKE_INSTALL_PREFIX}"
-  DEPENDS ros2_underlay
-  COMMENT "Generating environment scripts and Slicer launcher config..."
+  DEPENDS minimal_ros2_packages
+  COMMENT "Generating environment scripts..."
 )
 
 # 6. Export CMake Package Config (find_package(minimal_ros2 REQUIRED))
@@ -119,6 +119,6 @@ add_custom_target(minimal_ros2_config ALL
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${CMAKE_CURRENT_BINARY_DIR}/minimal_ros2-config-version.cmake"
     "${CMAKE_INSTALL_PREFIX}/share/minimal_ros2/cmake/minimal_ros2-config-version.cmake"
-  DEPENDS ros2_underlay
+  DEPENDS minimal_ros2_packages
   COMMENT "Exporting minimal_ros2 CMake package configuration..."
 )
