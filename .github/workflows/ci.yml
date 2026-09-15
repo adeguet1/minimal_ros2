@@ -34,6 +34,11 @@ jobs:
         run: |
           brew install ninja libyaml spdlog console_bridge eigen asio pybind11
 
+      # Windows MSVC Developer Environment
+      - name: Set up Visual Studio developer command prompt
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
       # Windows System Dependencies & Configuration
       - name: Configure Windows environment
         if: runner.os == 'Windows'

@@ -31,6 +31,31 @@ list(REMOVE_DUPLICATES MINIMAL_PREFIX_PATH)
 
 string(REPLACE ";" "\\;" MINIMAL_PREFIX_ESCAPED "${MINIMAL_PREFIX_PATH}")
 set(EXTRA_CMAKE_ARGS "-DCMAKE_PREFIX_PATH=${MINIMAL_PREFIX_ESCAPED}")
+if(CMAKE_TOOLCHAIN_FILE)
+  list(APPEND EXTRA_CMAKE_ARGS "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}")
+endif()
+
+set(COLCON_ENV_CMD)
+if(WIN32)
+  if(DEFINED ENV{VisualStudioVersion})
+    set(_vs_ver "$ENV{VisualStudioVersion}")
+  elseif(CMAKE_GENERATOR MATCHES "Visual Studio 18")
+    set(_vs_ver "18.0")
+  elseif(CMAKE_GENERATOR MATCHES "Visual Studio 17")
+    set(_vs_ver "17.0")
+  elseif(CMAKE_GENERATOR MATCHES "Visual Studio 16")
+    set(_vs_ver "16.0")
+  elseif(MSVC_VERSION GREATER_EQUAL 1940)
+    set(_vs_ver "18.0")
+  elseif(MSVC_VERSION GREATER_EQUAL 1930)
+    set(_vs_ver "17.0")
+  elseif(MSVC_VERSION GREATER_EQUAL 1920)
+    set(_vs_ver "16.0")
+  else()
+    set(_vs_ver "18.0")
+  endif()
+  set(COLCON_ENV_CMD ${CMAKE_COMMAND} -E env "VisualStudioVersion=${_vs_ver}")
+endif()
 
 # Packages ignored (test fixtures and optional plugins)
 set(PACKAGES_TO_IGNORE
@@ -60,7 +85,7 @@ if(NCORES EQUAL 0)
 endif()
 
 add_custom_target(minimal_ros2_packages ALL
-  COMMAND "${BUILD_COLCON_EXECUTABLE}" build
+  COMMAND ${COLCON_ENV_CMD} "${BUILD_COLCON_EXECUTABLE}" build
     --base-paths "${CMAKE_SOURCE_DIR}/src"
     --merge-install
     --install-base "${CMAKE_INSTALL_PREFIX}"
