@@ -3,14 +3,6 @@
 
 find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
-# Prefix and pybind11 detection
-execute_process(
-  COMMAND "${BUILD_PYTHON_EXECUTABLE}" -m pybind11 --cmakedir
-  OUTPUT_VARIABLE PYBIND11_CMAKE_DIR
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-  ERROR_QUIET
-)
-
 set(UNDERLAY_PREFIX_PATH "${CMAKE_INSTALL_PREFIX}")
 if(APPLE)
   if(EXISTS "/opt/homebrew")
@@ -19,15 +11,17 @@ if(APPLE)
     list(APPEND UNDERLAY_PREFIX_PATH "/usr/local")
   endif()
 endif()
-if(PYBIND11_CMAKE_DIR AND EXISTS "${PYBIND11_CMAKE_DIR}")
-  list(APPEND UNDERLAY_PREFIX_PATH "${PYBIND11_CMAKE_DIR}")
-endif()
+
+file(GLOB _PYBIND11_PREFIXES
+  "${MINIMAL_ROS2_VENV_DIR}/lib/python*/site-packages/pybind11"
+  "${MINIMAL_ROS2_VENV_DIR}/Lib/site-packages/pybind11"
+)
+foreach(_p ${_PYBIND11_PREFIXES})
+  list(APPEND UNDERLAY_PREFIX_PATH "${_p}")
+endforeach()
 
 string(REPLACE ";" "\\;" UNDERLAY_PREFIX_ESCAPED "${UNDERLAY_PREFIX_PATH}")
 set(EXTRA_CMAKE_ARGS "-DCMAKE_PREFIX_PATH=${UNDERLAY_PREFIX_ESCAPED}")
-if(PYBIND11_CMAKE_DIR AND EXISTS "${PYBIND11_CMAKE_DIR}")
-  list(APPEND EXTRA_CMAKE_ARGS "-Dpybind11_DIR=${PYBIND11_CMAKE_DIR}")
-endif()
 
 # Packages ignored (test fixtures and optional plugins)
 set(PACKAGES_TO_IGNORE
@@ -47,6 +41,7 @@ set(PACKAGES_TO_IGNORE
   test_tracetools_launch
   test_ros2trace
   examples_tf2_py
+  lttngpy
 )
 
 add_custom_target(ros2_underlay ALL

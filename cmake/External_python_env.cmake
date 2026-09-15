@@ -16,7 +16,6 @@ endif()
 
 if(EXISTS "${VENV_PYTHON}")
   add_custom_target(python_build_env
-    COMMAND "${VENV_PYTHON}" -c "import pybind11, os, shutil; src=pybind11.get_cmake_dir(); dst=os.path.join('${CMAKE_INSTALL_PREFIX}', 'share', 'cmake', 'pybind11'); os.makedirs(os.path.dirname(dst), exist_ok=True); shutil.copytree(src, dst, dirs_exist_ok=True)"
     COMMENT "Python build environment already present in ${MINIMAL_ROS2_VENV_DIR}"
   )
 else()
@@ -24,7 +23,6 @@ else()
     COMMAND "${Python3_EXECUTABLE}" -m venv "${MINIMAL_ROS2_VENV_DIR}"
     COMMAND "${VENV_PYTHON}" -m pip install --upgrade pip
     COMMAND "${VENV_PYTHON}" -m pip install colcon-common-extensions "empy==3.3.4" lark catkin_pkg pyyaml numpy pybind11 setuptools
-    COMMAND "${VENV_PYTHON}" -c "import pybind11, os, shutil; src=pybind11.get_cmake_dir(); dst=os.path.join('${CMAKE_INSTALL_PREFIX}', 'share', 'cmake', 'pybind11'); os.makedirs(os.path.dirname(dst), exist_ok=True); shutil.copytree(src, dst, dirs_exist_ok=True)"
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     VERBATIM
     COMMENT "Creating Python build environment in ${MINIMAL_ROS2_VENV_DIR}..."
