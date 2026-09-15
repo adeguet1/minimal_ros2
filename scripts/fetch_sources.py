@@ -81,12 +81,15 @@ def clone_or_update_repo(repo: dict, src_dir: Path, shallow: bool, update: bool)
     url = repo["url"]
     version = repo["version"]
 
+    git_env = dict(os.environ)
+    git_env["GIT_CONFIG_GLOBAL"] = os.devnull
+
     if (target / ".git").exists():
         if update:
             print(f"[FETCH] Updating {name} ({version})...")
             try:
-                subprocess.run(["git", "-C", str(target), "fetch", "origin"], check=True, capture_output=True)
-                subprocess.run(["git", "-C", str(target), "checkout", version], check=True, capture_output=True)
+                subprocess.run(["git", "-C", str(target), "fetch", "origin"], env=git_env, check=True, capture_output=True)
+                subprocess.run(["git", "-C", str(target), "checkout", version], env=git_env, check=True, capture_output=True)
                 return True, f"Updated {name}"
             except subprocess.CalledProcessError as e:
                 return False, f"Failed to update {name}: {e}"
@@ -95,20 +98,23 @@ def clone_or_update_repo(repo: dict, src_dir: Path, shallow: bool, update: bool)
 
     print(f"[CLONE] Cloning {name} [{version}] from {url}...")
     target.parent.mkdir(parents=True, exist_ok=True)
-    cmd = ["git", "-c", "url.git@github.com:.insteadof=", "clone"]
+    cmd = ["git", "clone"]
     if shallow:
         cmd += ["--depth", "1"]
     cmd += ["-b", version, url, str(target)]
 
+    git_env = dict(os.environ)
+    git_env["GIT_CONFIG_GLOBAL"] = os.devnull
+
     try:
-        subprocess.run(cmd, check=True, capture_output=True, text=True)
+        subprocess.run(cmd, env=git_env, check=True, capture_output=True, text=True)
         return True, f"Cloned {name}"
     except subprocess.CalledProcessError as e:
         # If branch/tag failed with shallow clone, try full clone then checkout
         print(f"[WARN] Shallow clone failed for {name}, trying full clone...")
         try:
-            subprocess.run(["git", "-c", "url.git@github.com:.insteadof=", "clone", url, str(target)], check=True, capture_output=True, text=True)
-            subprocess.run(["git", "-C", str(target), "checkout", version], check=True, capture_output=True, text=True)
+            subprocess.run(["git", "clone", url, str(target)], env=git_env, check=True, capture_output=True, text=True)
+            subprocess.run(["git", "-C", str(target), "checkout", version], env=git_env, check=True, capture_output=True, text=True)
             return True, f"Cloned {name}"
         except subprocess.CalledProcessError as e2:
             return False, f"Failed to clone {name}: {e2.stderr}"
