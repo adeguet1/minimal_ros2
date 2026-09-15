@@ -95,7 +95,7 @@ def clone_or_update_repo(repo: dict, src_dir: Path, shallow: bool, update: bool)
 
     print(f"[CLONE] Cloning {name} [{version}] from {url}...")
     target.parent.mkdir(parents=True, exist_ok=True)
-    cmd = ["git", "clone"]
+    cmd = ["git", "-c", "url.git@github.com:.insteadof=", "clone"]
     if shallow:
         cmd += ["--depth", "1"]
     cmd += ["-b", version, url, str(target)]
@@ -107,7 +107,7 @@ def clone_or_update_repo(repo: dict, src_dir: Path, shallow: bool, update: bool)
         # If branch/tag failed with shallow clone, try full clone then checkout
         print(f"[WARN] Shallow clone failed for {name}, trying full clone...")
         try:
-            subprocess.run(["git", "clone", url, str(target)], check=True, capture_output=True, text=True)
+            subprocess.run(["git", "-c", "url.git@github.com:.insteadof=", "clone", url, str(target)], check=True, capture_output=True, text=True)
             subprocess.run(["git", "-C", str(target), "checkout", version], check=True, capture_output=True, text=True)
             return True, f"Cloned {name}"
         except subprocess.CalledProcessError as e2:
