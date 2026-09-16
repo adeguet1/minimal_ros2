@@ -117,7 +117,6 @@ add_custom_target(minimal_ros2_packages ALL
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
       -DPython3_EXECUTABLE=${BUILD_PYTHON_EXECUTABLE}
       -DBUILD_TESTING=OFF
-      -DCMAKE_BUILD_PARALLEL_LEVEL=${NCORES}
       ${EXTRA_CMAKE_ARGS}
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
   DEPENDS python_build_env orocos_kdl
