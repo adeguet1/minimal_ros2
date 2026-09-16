@@ -27,6 +27,18 @@ file(GLOB _PYBIND11_PREFIXES
 foreach(_p ${_PYBIND11_PREFIXES})
   list(APPEND MINIMAL_PREFIX_PATH "${_p}")
 endforeach()
+
+# Vendor packages (e.g. console_bridge_vendor) install external libraries into <prefix>/opt/<vendor_pkg>
+list(APPEND MINIMAL_PREFIX_PATH
+  "${CMAKE_INSTALL_PREFIX}/opt/console_bridge_vendor"
+  "${CMAKE_INSTALL_PREFIX}/opt/spdlog_vendor"
+)
+if(WIN32)
+  list(APPEND MINIMAL_PREFIX_PATH
+    "${CMAKE_INSTALL_PREFIX}/opt/console_bridge_vendor/CMake"
+  )
+endif()
+
 list(REMOVE_DUPLICATES MINIMAL_PREFIX_PATH)
 
 string(REPLACE ";" "\\;" MINIMAL_PREFIX_ESCAPED "${MINIMAL_PREFIX_PATH}")
