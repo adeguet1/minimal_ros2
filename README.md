@@ -46,7 +46,7 @@ minimal_ros2/
    ```
 2. **Homebrew Dependencies**:
    ```bash
-   brew install cmake ninja libyaml spdlog console_bridge eigen asio pybind11
+   brew install cmake ninja libyaml spdlog eigen asio pybind11
    ```
 3. **Python (>= 3.10)**: Any modern Python 3 interpreter.
 
@@ -55,7 +55,7 @@ minimal_ros2/
    ```bash
    sudo apt-get update
    sudo apt-get install -y cmake ninja-build libyaml-dev libspdlog-dev \
-     libeigen3-dev libconsole-bridge-dev libasio-dev pybind11-dev
+     libeigen3-dev libasio-dev pybind11-dev
    ```
 2. **Python (>= 3.10)**: `python3` and `python3-venv`.
 
@@ -69,7 +69,7 @@ minimal_ros2/
    ```
 5. **vcpkg Dependencies**:
    ```cmd
-   vcpkg install libyaml spdlog eigen3 asio console-bridge pybind11 --triplet x64-windows
+   vcpkg install libyaml spdlog eigen3 asio pybind11 --triplet x64-windows
    ```
 
 ---

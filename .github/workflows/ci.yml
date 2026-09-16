@@ -32,7 +32,7 @@ jobs:
       - name: Install macOS dependencies
         if: runner.os == 'macOS'
         run: |
-          brew install ninja libyaml spdlog console_bridge eigen asio pybind11
+          brew install ninja libyaml spdlog eigen asio pybind11
 
       # Windows MSVC Developer Environment
       - name: Set up Visual Studio developer command prompt
@@ -45,7 +45,7 @@ jobs:
         shell: pwsh
         run: |
           git config --system core.longpaths true
-          vcpkg install libyaml spdlog eigen3 asio console-bridge pybind11 --triplet x64-windows
+          vcpkg install libyaml spdlog eigen3 asio pybind11 --triplet x64-windows
 
       # Configure Superbuild
       - name: Configure Superbuild (POSIX)
@@ -102,6 +102,7 @@ jobs:
       - name: Run Downstream Example (POSIX)
         if: runner.os != 'Windows'
         run: |
+          . "${{ github.workspace }}/install/setup.sh"
           ./build_example/minimal_consumer
 
       # Run Downstream Example (Windows)
@@ -109,7 +110,8 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $env:PATH = "${{ github.workspace }}\install\bin;$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\bin;$env:PATH"
+          . "${{ github.workspace }}\install\setup.ps1"
+          $env:PATH = "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\bin;$env:PATH"
           .\build_example\Release\minimal_consumer.exe
 
       # Upload Prebuilt minimal_ros2 Archive
