@@ -35,7 +35,14 @@ if(CMAKE_TOOLCHAIN_FILE)
   list(APPEND EXTRA_CMAKE_ARGS "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}")
 endif()
 
-set(COLCON_ENV_CMD ${CMAKE_COMMAND} -E env "PATH=${BUILD_VENV_BIN_DIR}:$ENV{PATH}")
+set(COLCON_ENV_CMD ${CMAKE_COMMAND} -E env)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.25")
+  file(TO_NATIVE_PATH "${BUILD_VENV_BIN_DIR}" _native_venv_bin)
+  list(APPEND COLCON_ENV_CMD "--modify" "PATH=path_list_prepend:${_native_venv_bin}")
+elseif(UNIX)
+  list(APPEND COLCON_ENV_CMD "PATH=${BUILD_VENV_BIN_DIR}:$ENV{PATH}")
+endif()
+
 if(WIN32)
   if(DEFINED ENV{VisualStudioVersion})
     set(_vs_ver "$ENV{VisualStudioVersion}")
@@ -56,6 +63,7 @@ if(WIN32)
   endif()
   list(APPEND COLCON_ENV_CMD "VisualStudioVersion=${_vs_ver}")
 endif()
+list(APPEND COLCON_ENV_CMD "--")
 
 # Packages ignored (test fixtures and optional plugins)
 set(PACKAGES_TO_IGNORE
@@ -123,3 +131,5 @@ add_custom_target(minimal_ros2_packages ALL
   VERBATIM
   COMMENT "Compiling minimal ROS 2 packages into ${CMAKE_INSTALL_PREFIX}..."
 )
+
+add_dependencies(minimal_ros2_packages python_build_env orocos_kdl)

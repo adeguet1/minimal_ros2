@@ -16,7 +16,7 @@ else()
   set(VENV_BIN_DIR "${MINIMAL_ROS2_VENV_DIR}/bin")
 endif()
 
-if(EXISTS "${VENV_PYTHON}")
+if(EXISTS "${VENV_COLCON}")
   add_custom_target(python_build_env
     COMMENT "Python build environment already present in ${MINIMAL_ROS2_VENV_DIR}"
   )

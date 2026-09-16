@@ -118,7 +118,7 @@ if (Test-Path "$InstallDir\\opt") {
     Get-ChildItem -Path "$InstallDir\\opt" -Directory | ForEach-Object {
         $env:CMAKE_PREFIX_PATH = "$($_.FullName);$env:CMAKE_PREFIX_PATH"
         if (Test-Path "$($_.FullName)\\bin") { $env:PATH = "$($_.FullName)\\bin;$env:PATH" }
-        if (Test-Path "$($_.FullName)\lib") { $env:PATH = "$($_.FullName)\lib;$env:PATH" }
+        if (Test-Path "$($_.FullName)\\lib") { $env:PATH = "$($_.FullName)\\lib;$env:PATH" }
     }
 }
 
