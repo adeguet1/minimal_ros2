@@ -61,7 +61,7 @@ minimal_ros2/
 
 ### Windows
 1. **Visual Studio 2022** (with "Desktop development with C++").
-2. **CMake (>= 3.20)** & **Git**.
+2. **CMake (>= 3.25)** & **Git**.
 3. **Python (>= 3.10)** installed and in `PATH`.
 4. Enable **Windows Long Paths**:
    ```cmd
