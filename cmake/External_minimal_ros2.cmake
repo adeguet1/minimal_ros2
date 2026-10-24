@@ -25,7 +25,7 @@ file(GLOB _PYBIND11_PREFIXES
   "${MINIMAL_ROS2_VENV_DIR}/Lib/site-packages/pybind11"
 )
 foreach(_p ${_PYBIND11_PREFIXES})
-  list(APPEND MINIMAL_PREFIX_PATH "${_p}")
+  list(APPEND MINIMAL_PREFIX_PATH "${_p}" "${_p}/share/cmake/pybind11")
 endforeach()
 
 # Vendor packages (e.g. console_bridge_vendor) install external libraries into <prefix>/opt/<vendor_pkg>
@@ -43,7 +43,9 @@ list(REMOVE_DUPLICATES MINIMAL_PREFIX_PATH)
 
 string(REPLACE ";" "\\;" MINIMAL_PREFIX_ESCAPED "${MINIMAL_PREFIX_PATH}")
 set(EXTRA_CMAKE_ARGS "-DCMAKE_PREFIX_PATH=${MINIMAL_PREFIX_ESCAPED}")
-list(APPEND EXTRA_CMAKE_ARGS "-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE")
+if(NOT WIN32)
+  list(APPEND EXTRA_CMAKE_ARGS "-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE")
+endif()
 if(APPLE)
   list(APPEND EXTRA_CMAKE_ARGS "-DCMAKE_INSTALL_RPATH=@loader_path/../../..;@loader_path/..;@loader_path")
 endif()

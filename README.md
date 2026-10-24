@@ -69,7 +69,7 @@ minimal_ros2/
    ```
 5. **vcpkg Dependencies**:
    ```cmd
-   vcpkg install libyaml spdlog eigen3 asio pybind11 --triplet x64-windows
+   vcpkg install libyaml spdlog eigen3 asio --triplet x64-windows
    ```
 
 ---
