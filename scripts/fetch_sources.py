@@ -157,5 +157,17 @@ def main():
 
     print(f"\n==> All {len(repos)} repositories successfully synchronized in {args.src_dir}")
 
+    # Apply patches if available
+    patches_dir = args.repos_file.resolve().parent.parent / "patches"
+    if patches_dir.exists():
+        for patch_file in sorted(patches_dir.glob("*.patch")):
+            for repo_dir in args.src_dir.glob("*/*"):
+                if (repo_dir / ".git").exists():
+                    res = subprocess.run(["git", "apply", "--check", str(patch_file.resolve())], cwd=repo_dir, capture_output=True)
+                    if res.returncode == 0:
+                        print(f"[PATCH] Applying {patch_file.name} to {repo_dir.name}...")
+                        subprocess.run(["git", "apply", str(patch_file.resolve())], cwd=repo_dir, check=True)
+                        break
+
 if __name__ == "__main__":
     main()
